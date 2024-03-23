@@ -3,21 +3,25 @@ import { RequestHandler, Router } from 'express';
 import { Logger } from '../../config/logger.config';
 import {
   archiveChatSchema,
+  blockUserSchema,
   contactValidateSchema,
   deleteMessageSchema,
   messageUpSchema,
   messageValidateSchema,
+  presenceSchema,
   privacySettingsSchema,
   profileNameSchema,
   profilePictureSchema,
   profileSchema,
   profileStatusSchema,
   readMessageSchema,
+  updateMessageSchema,
   whatsappNumberSchema,
 } from '../../validate/validate.schema';
 import { RouterBroker } from '../abstract/abstract.router';
 import {
   ArchiveChatDto,
+  BlockUserDto,
   DeleteMessage,
   getBase64FromMediaMessageDto,
   NumberDto,
@@ -26,6 +30,8 @@ import {
   ProfilePictureDto,
   ProfileStatusDto,
   ReadMessageDto,
+  SendPresenceDto,
+  UpdateMessageDto,
   WhatsAppNumberDto,
 } from '../dto/chat.dto';
 import { InstanceDto } from '../dto/instance.dto';
@@ -56,7 +62,7 @@ export class ChatRouter extends RouterBroker {
           execute: (instance, data) => chatController.whatsappNumber(instance, data),
         });
 
-        return res.status(HttpStatus.CREATED).json(response);
+        return res.status(HttpStatus.OK).json(response);
       })
       .put(this.routerPath('markMessageAsRead'), ...guards, async (req, res) => {
         logger.verbose('request received in markMessageAsRead');
@@ -228,6 +234,22 @@ export class ChatRouter extends RouterBroker {
 
         return res.status(HttpStatus.OK).json(response);
       })
+      .post(this.routerPath('sendPresence'), ...guards, async (req, res) => {
+        logger.verbose('request received in sendPresence');
+        logger.verbose('request body: ');
+        logger.verbose(req.body);
+
+        logger.verbose('request query: ');
+        logger.verbose(req.query);
+        const response = await this.dataValidate<null>({
+          request: req,
+          schema: presenceSchema,
+          ClassRef: SendPresenceDto,
+          execute: (instance, data) => chatController.sendPresence(instance, data),
+        });
+
+        return res.status(HttpStatus.CREATED).json(response);
+      })
       // Profile routes
       .get(this.routerPath('fetchPrivacySettings'), ...guards, async (req, res) => {
         logger.verbose('request received in fetchPrivacySettings');
@@ -347,6 +369,40 @@ export class ChatRouter extends RouterBroker {
         });
 
         return res.status(HttpStatus.OK).json(response);
+      })
+      .put(this.routerPath('updateMessage'), ...guards, async (req, res) => {
+        logger.verbose('request received in updateMessage');
+        logger.verbose('request body: ');
+        logger.verbose(req.body);
+
+        logger.verbose('request query: ');
+        logger.verbose(req.query);
+
+        const response = await this.dataValidate<UpdateMessageDto>({
+          request: req,
+          schema: updateMessageSchema,
+          ClassRef: UpdateMessageDto,
+          execute: (instance, data) => chatController.updateMessage(instance, data),
+        });
+
+        return res.status(HttpStatus.OK).json(response);
+      })
+      .put(this.routerPath('updateBlockStatus'), ...guards, async (req, res) => {
+        logger.verbose('request received in updateBlockStatus');
+        logger.verbose('request body: ');
+        logger.verbose(req.body);
+
+        logger.verbose('request query: ');
+        logger.verbose(req.query);
+
+        const response = await this.dataValidate<BlockUserDto>({
+          request: req,
+          schema: blockUserSchema,
+          ClassRef: BlockUserDto,
+          execute: (instance, data) => chatController.blockUser(instance, data),
+        });
+
+        return res.status(HttpStatus.CREATED).json(response);
       });
   }
 
