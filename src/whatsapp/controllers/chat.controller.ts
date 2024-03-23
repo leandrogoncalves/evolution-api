@@ -1,6 +1,7 @@
 import { Logger } from '../../config/logger.config';
 import {
   ArchiveChatDto,
+  BlockUserDto,
   DeleteMessage,
   getBase64FromMediaMessageDto,
   NumberDto,
@@ -9,6 +10,8 @@ import {
   ProfilePictureDto,
   ProfileStatusDto,
   ReadMessageDto,
+  SendPresenceDto,
+  UpdateMessageDto,
   WhatsAppNumberDto,
 } from '../dto/chat.dto';
 import { InstanceDto } from '../dto/instance.dto';
@@ -77,6 +80,11 @@ export class ChatController {
     return await this.waMonitor.waInstances[instanceName].fetchChats();
   }
 
+  public async sendPresence({ instanceName }: InstanceDto, data: SendPresenceDto) {
+    logger.verbose('requested sendPresence from ' + instanceName + ' instance');
+    return await this.waMonitor.waInstances[instanceName].sendPresence(data);
+  }
+
   public async fetchPrivacySettings({ instanceName }: InstanceDto) {
     logger.verbose('requested fetchPrivacySettings from ' + instanceName + ' instance');
     return await this.waMonitor.waInstances[instanceName].fetchPrivacySettings();
@@ -110,5 +118,15 @@ export class ChatController {
   public async removeProfilePicture({ instanceName }: InstanceDto) {
     logger.verbose('requested removeProfilePicture from ' + instanceName + ' instance');
     return await this.waMonitor.waInstances[instanceName].removeProfilePicture();
+  }
+
+  public async updateMessage({ instanceName }: InstanceDto, data: UpdateMessageDto) {
+    logger.verbose('requested updateMessage from ' + instanceName + ' instance');
+    return await this.waMonitor.waInstances[instanceName].updateMessage(data);
+  }
+
+  public async blockUser({ instanceName }: InstanceDto, data: BlockUserDto) {
+    logger.verbose('requested blockUser from ' + instanceName + ' instance');
+    return await this.waMonitor.waInstances[instanceName].blockUser(data);
   }
 }
