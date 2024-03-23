@@ -182,6 +182,19 @@ export class TypebotService {
       });
     }
 
+    const createSessionData = {
+      url: url,
+      typebot: typebot,
+      remoteJid: remoteJid,
+      expire: expire,
+      keyword_finish: keyword_finish,
+      delay_message: delay_message,
+      unknown_message: unknown_message,
+      listening_from_me: listening_from_me,
+      sessions: sessions,
+      prefilledVariables: prefilledVariables,
+    };
+
     if (startSession) {
       const newSessions = await this.clearSessions(instance, remoteJid);
 
